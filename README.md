@@ -49,8 +49,10 @@ A fixed-supply ERC-20 token (OpenZeppelin v5) with Hardhat scripts to deploy it 
 early, and the date can only be pushed later, never earlier. After adding liquidity on VVS:
 
 1. Put the LP token address in `.env` as `LP_TOKEN_ADDRESS`, and optionally `LOCK_MONTHS` (default 12).
-2. Run `npm run lock-liquidity:mainnet`. It deploys the lock and verifies it on the explorer.
-3. Send your LP tokens to the printed lock address.
+2. Run `npm run check-pool:mainnet`. It confirms the address is the RRx / WCRO pool, shows the pool's
+   reserves and price, and checks that your wallet holds the LP tokens. Nothing is deployed.
+3. Run `npm run lock-liquidity:mainnet`. It repeats the same checks, then deploys the lock and verifies it on the explorer.
+4. Send your LP tokens to the printed lock address.
 
 ## Delivery app: payments and fee escrow
 
