@@ -4,21 +4,18 @@ Copy-paste text and files for the Cronos Explorer token info form, and later for
 
 ## Logo
 
-A gold **Я x R** monogram set in Cinzel: the first R is mirrored so the two R's frame the center
-like wings, two crossed royal scepters form the "x", and a ruby **location pin** sits where the
-scepters cross, a nod to the RRoyal delivery app. A gold delivery trail sweeps underneath.
-The background is transparent, so it works on dark and light backgrounds.
+The official RRx coin logo: a gold **Я x R** monogram (the first R mirrored) on black, with two
+crossed jeweled scepters forming the "x" and a faceted **black diamond** set where they cross.
 
 | File | Use |
 |------|-----|
-| `rroyal-logo.svg` | Master logo (scales to any size) |
+| `rroyal-logo-master.png` | Original artwork, 1600×1600 |
 | `rroyal-logo-1024.png` / `-512.png` | Website, social media, app store art |
-| `rroyal-logo-256.png` | Explorer, CoinGecko, CoinMarketCap token logo (256×256 PNG) |
-| `rroyal-icon.svg` | Master icon: the monogram without the trail, enlarged for small sizes |
-| `rroyal-icon-512.png` | App icon, social profile picture |
-| `rroyal-icon-64.png` / `-32.png` | Wallet token lists, website favicon |
-| `rroyal-wordmark.svg` / `.png` | Wide version (monogram + "RROYAL") for website and app headers |
-| `logo-preview.png` | Preview on dark and light backgrounds and at small sizes |
+| `rroyal-logo-256.png` | Explorer, CoinGecko, CoinMarketCap, DexScreener token logo (256×256 PNG) |
+| `rroyal-logo-128.png` / `-64.png` / `-32.png` | Wallet token lists, website favicon |
+| `logo-preview.png` | The logo square and in the round crop wallets use |
+
+The sized versions have a little extra black margin so wallets' round crop never clips the R's.
 
 ## Basic details
 

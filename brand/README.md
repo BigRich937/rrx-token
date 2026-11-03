@@ -1,24 +1,14 @@
 # RRoyal brand
 
-## Official logo (final)
+## Official logo
 
-**Я x R monogram in Cinzel Medium**, with the ruby location pin at the center of the crossed
-scepters and the gold delivery trail underneath. The files at the top of this folder are the
-official set:
+**Gold Я x R monogram with crossed jeweled scepters and a black diamond at the center**, on black.
+The files at the top of this folder are the official set (see `TOKEN_INFO.md` for which size to
+use where). The 256px PNG is the token logo for the explorer, CoinGecko, CoinMarketCap and
+DexScreener.
 
-- `rroyal-logo.svg` / `-1024.png` / `-512.png` / `-256.png`: main logo (256px is the token logo)
-- `rroyal-icon.svg` / `-512.png` / `-64.png` / `-32.png`: small-size icon (wallets, favicon)
-- `favicon.ico`: multi-size (16/32/48/64/128/256px) icon for browser tabs
-- `rroyal-wordmark.svg` / `.png`: wide header version with "RROYAL"
-- `logo-preview.png`: everything on dark and light backgrounds
-
-Both the main logo and the icon are centered and scaled so every corner of the
-artwork stays inside the circle that Discord, X/Twitter, wallets, and
-exchange listings crop square icons to (~83% of the canvas radius). Below
-~32px the icon's fine linework gets hard to resolve — that's an inherent
-limit of the detail level, not a centering issue.
-
-Regenerate with `node tools/finalLogo.js <out dir>` (see below).
+The earlier generated Cinzel version (ruby pin, delivery trail, wide wordmark) is kept in
+`previous-generated/`.
 
 ## Exploration history (newest last)
 
