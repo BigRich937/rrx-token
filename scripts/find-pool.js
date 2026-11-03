@@ -16,15 +16,44 @@ const ABI = [
   "function getReserves() view returns (uint112, uint112, uint32)",
   "function balanceOf(address) view returns (uint256)",
   "function factory() view returns (address)",
+  "function fee() view returns (uint24)",
+  "function liquidity() view returns (uint128)",
+  "function slot0() view returns (uint160 sqrtPriceX96, int24 tick, uint16, uint16, uint16, uint32, bool)",
 ];
 
-async function describe(ethers, address) {
+async function describe(ethers, address, holder) {
   const code = await ethers.provider.getCode(address);
   if (code === "0x") return "a wallet address (not a contract)";
   const c = new ethers.Contract(address, ABI, ethers.provider);
-  const tryCall = async (fn) => { try { return await c[fn](); } catch { return null; } };
-  const [name, symbol, token0, factory] = await Promise.all([tryCall("name"), tryCall("symbol"), tryCall("token0"), tryCall("factory")]);
-  if (token0) return `a liquidity pool (LP token) ${symbol || ""} for ${token0} / ${await tryCall("token1")}`;
+  const tryCall = async (fn, ...args) => { try { return await c[fn](...args); } catch { return null; } };
+  const [name, symbol, token0, token1, factory, fee, slot0, reserves] = await Promise.all([
+    tryCall("name"), tryCall("symbol"), tryCall("token0"), tryCall("token1"),
+    tryCall("factory"), tryCall("fee"), tryCall("slot0"), tryCall("getReserves"),
+  ]);
+  if (token0) {
+    const lines = [];
+    const rrxFirst = token0.toLowerCase() === RRX.toLowerCase();
+    if (slot0 && fee !== null) {
+      // V3 pool: price of token0 in token1 = (sqrtPriceX96 / 2^96)^2 (both tokens have 18 decimals)
+      const p01 = (Number(slot0[0]) / 2 ** 96) ** 2;
+      const croPerRrx = rrxFirst ? p01 : 1 / p01;
+      lines.push(`a V3 (concentrated liquidity) pool, fee tier ${Number(fee) / 10000}%`);
+      lines.push(`  Tokens:      ${token0} / ${token1}`);
+      lines.push(`  Factory:     ${factory}`);
+      lines.push(`  Price:       1 RRx = ${croPerRrx.toPrecision(4)} CRO`);
+      lines.push(`  Liquidity:   ${await tryCall("liquidity")} (0 means no position is active at this price)`);
+      lines.push("  V3 positions are NFTs in your wallet, not LP tokens.");
+    } else {
+      lines.push(`a V2-style pool (LP token) ${symbol || ""} for ${token0} / ${token1}`);
+      lines.push(`  Factory:     ${factory}`);
+      if (reserves) {
+        const rrx = rrxFirst ? reserves[0] : reserves[1], cro = rrxFirst ? reserves[1] : reserves[0];
+        lines.push(`  Pool holds:  ${ethers.formatEther(rrx)} RRx + ${ethers.formatEther(cro)} CRO`);
+      }
+      if (holder) lines.push(`  Your LP:     ${ethers.formatEther((await tryCall("balanceOf", holder)) ?? 0n)}`);
+    }
+    return lines.join("\n");
+  }
   if (factory) return `a router-type contract (it points to factory ${factory}), not a pool`;
   if (symbol) return `a token: ${name} (${symbol}), not a pool`;
   return "a contract that is not a token or a pool";
@@ -34,7 +63,7 @@ async function main() {
   const { ethers } = hre;
   const [me] = await ethers.getSigners();
   const inspect = process.env.INSPECT_ADDRESS;
-  if (inspect) console.log(`${inspect} is ${await describe(ethers, inspect)}`);
+  if (inspect) console.log(`${inspect} is ${await describe(ethers, inspect, me?.address)}`);
 
   const factory = new ethers.Contract(VVS_FACTORY, ABI, ethers.provider);
   let pair;
@@ -44,7 +73,7 @@ async function main() {
     throw new Error(`Could not query the VVS factory at ${VVS_FACTORY}.`);
   }
   if (pair === ethers.ZeroAddress) {
-    console.log("No RRx / CRO pool exists on VVS yet. The add-liquidity transaction did not go through.");
+    console.log("No classic (V2) RRx / CRO pool exists on VVS. If you added liquidity on VVS V3, check the address above instead.");
     return;
   }
   const p = new ethers.Contract(pair, ABI, ethers.provider);
